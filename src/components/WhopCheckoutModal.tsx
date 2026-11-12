@@ -17,15 +17,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import {
-  ExternalLink,
-  ShieldCheck,
-  CheckCircle2,
-  Lock,
-  CreditCard,
-  Sparkles,
-  Layers,
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { trackWhopEvent } from "@/lib/whop-tracker";
 import { WHOP_CONFIG } from "@/lib/whop-config";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -108,15 +100,12 @@ export function WhopCheckoutModal({
         {/* MODAL HEADER */}
         <div className="bg-[#10243A] text-white p-6 rounded-t-2xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#E87932] flex items-center gap-1.5">
-              <ShieldCheck size={16} /> Whop Secure Checkout
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#E87932]">
+              Whop Secure Checkout
             </span>
-            <Badge
-              variant="outline"
-              className="border-white/20 text-white bg-white/10 text-xs font-semibold"
-            >
-              {product.isDeposit ? "Card-on-File Setup" : "Whop Payment Elements"}
-            </Badge>
+            <span className="text-[11px] text-white/60">
+              {product.isDeposit ? "Card-on-File Setup" : "Verified Payment"}
+            </span>
           </div>
           <DialogTitle className="text-2xl font-bold font-display text-white">
             {product.title}
@@ -129,7 +118,7 @@ export function WhopCheckoutModal({
               {product.formattedPrice}
             </span>
             <span className="text-xs text-white/60">
-              USD · Processed securely via Whop Payments
+              USD · Flat-rate via Whop Payments
             </span>
           </div>
         </div>
@@ -138,31 +127,31 @@ export function WhopCheckoutModal({
         <div className="p-6 space-y-6">
           {completed ? (
             <div className="text-center py-8 space-y-4">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                <CheckCircle2 size={36} />
+              <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                ✓
               </div>
-              <h3 className="text-2xl font-bold text-foreground">
-                Payment Completed Successfully!
+              <h3 className="text-2xl font-bold text-[#10243A]">
+                Payment Confirmed
               </h3>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                Thank you! Your payment method has been verified through Whop Elements. A confirmation receipt has been issued and our Austin team has received your order.
+                Your transaction has been processed securely through Whop. Our Austin operations team will follow up promptly.
               </p>
-              <div className="p-4 bg-muted/40 rounded-xl border border-border text-xs text-left font-mono max-w-sm mx-auto space-y-1">
-                <div>
-                  <span className="text-muted-foreground">Service:</span>{" "}
-                  <strong>{product.title}</strong>
+              <div className="p-4 bg-muted/40 rounded-xl border border-border text-xs text-left max-w-sm mx-auto space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Service</span>
+                  <strong className="text-foreground">{product.title}</strong>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Amount:</span>{" "}
-                  <strong>{product.formattedPrice} USD</strong>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Total Paid</span>
+                  <strong className="text-foreground">{product.formattedPrice} USD</strong>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Whop Account:</span>{" "}
-                  <code>{WHOP_CONFIG.accountId}</code>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Account</span>
+                  <span className="text-foreground">{WHOP_CONFIG.accountId}</span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Status:</span>{" "}
-                  <span className="text-emerald-600 font-bold">succeeded</span>
+                <div className="flex justify-between pt-1 border-t border-border/60">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className="text-emerald-600 font-bold">Settled</span>
                 </div>
               </div>
               <Button
@@ -174,17 +163,9 @@ export function WhopCheckoutModal({
             </div>
           ) : (
             <div className="space-y-5">
-              {/* WHOP SUITE HIGHLIGHT */}
-              <div className="bg-amber-50/80 border border-amber-200/70 rounded-xl p-3.5 text-xs text-amber-950 flex items-start gap-2.5">
-                <Lock size={16} className="shrink-0 text-[#E87932] mt-0.5" />
-                <div>
-                  <p className="font-semibold text-amber-900">
-                    Whop Payment Elements (Zero Custom Card Forms)
-                  </p>
-                  <p className="text-amber-800/90 mt-0.5">
-                    PCI-compliant hosted elements with Apple Pay, Google Pay, cards, and automatic BNPL financing (Klarna, Splitit) for eligible buyers.
-                  </p>
-                </div>
+              {/* Trust statement */}
+              <div className="p-3.5 bg-muted/30 border border-border rounded-xl text-xs text-muted-foreground leading-relaxed">
+                PCI-compliant checkout powered directly by Whop Payments. Supports Apple Pay, Google Pay, credit cards, and flexible installment plans (Klarna &amp; Splitit).
               </div>
 
               {/* ELEMENT SUITE SELECTOR TABS */}
@@ -198,7 +179,7 @@ export function WhopCheckoutModal({
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  CheckoutElement
+                  Checkout Elements
                 </button>
                 <button
                   type="button"
@@ -209,16 +190,15 @@ export function WhopCheckoutModal({
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  PaymentElement + Branding
+                  Payment &amp; Branding
                 </button>
               </div>
 
               {/* TAB 1: WHOP CHECKOUT ELEMENT */}
               {activeTab === "checkout" && (
-                <div className="border border-border/80 rounded-xl p-4 bg-background min-h-[260px] flex flex-col justify-between">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                    <CreditCard size={14} className="text-[#E87932]" />
-                    Whop Checkout Element
+                <div className="border border-border rounded-xl p-4 bg-background min-h-[260px] flex flex-col justify-between">
+                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                    Hosted Checkout Session
                   </div>
 
                   {elementsInstance && product.checkoutConfigId ? (
@@ -226,13 +206,13 @@ export function WhopCheckoutModal({
                       fallback={
                         <div className="p-4 bg-muted/40 rounded-lg text-center space-y-2">
                           <p className="text-xs text-muted-foreground">
-                            Configuration: <code>{product.checkoutConfigId}</code>
+                            Configuration: {product.checkoutConfigId}
                           </p>
                           <Button
                             onClick={handleSimulatedComplete}
-                            className="bg-[#E87932] hover:bg-[#E87932]/90 text-white text-xs font-bold"
+                            className="bg-[#E87932] hover:bg-[#E87932]/90 text-white text-xs font-semibold"
                           >
-                            Complete Test Checkout
+                            Complete Test Payment
                           </Button>
                         </div>
                       }
@@ -252,20 +232,18 @@ export function WhopCheckoutModal({
                     </div>
                   )}
 
-                  {/* Merchant of record note */}
-                  <div className="pt-4 border-t border-border/60 text-[11px] text-muted-foreground flex items-center justify-between">
+                  <div className="pt-3 border-t border-border/60 text-[11px] text-muted-foreground flex items-center justify-between">
                     <span>Powered by Whop Payments</span>
-                    <span>Account: {WHOP_CONFIG.accountId}</span>
+                    <span>Account {WHOP_CONFIG.accountId}</span>
                   </div>
                 </div>
               )}
 
               {/* TAB 2: WHOP PAYMENT ELEMENT + BRANDING ELEMENT */}
               {activeTab === "payment" && (
-                <div className="border border-border/80 rounded-xl p-4 bg-background min-h-[260px] flex flex-col justify-between">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                    <Layers size={14} className="text-[#E87932]" />
-                    Whop PaymentElement &amp; BrandingElement
+                <div className="border border-border rounded-xl p-4 bg-background min-h-[260px] flex flex-col justify-between">
+                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                    Payment Method &amp; Legal Notice
                   </div>
 
                   {elementsInstance && product.planId ? (
@@ -273,13 +251,13 @@ export function WhopCheckoutModal({
                       fallback={
                         <div className="p-4 bg-muted/40 rounded-lg text-center space-y-2">
                           <p className="text-xs text-muted-foreground">
-                            Plan: <code>{product.planId}</code>
+                            Plan: {product.planId}
                           </p>
                           <Button
                             onClick={handleSimulatedComplete}
-                            className="bg-[#E87932] hover:bg-[#E87932]/90 text-white text-xs font-bold"
+                            className="bg-[#E87932] hover:bg-[#E87932]/90 text-white text-xs font-semibold"
                           >
-                            Complete Test Checkout
+                            Complete Test Payment
                           </Button>
                         </div>
                       }
@@ -304,26 +282,26 @@ export function WhopCheckoutModal({
                     </div>
                   )}
 
-                  <div className="pt-4 border-t border-border/60 text-[11px] text-muted-foreground flex items-center justify-between">
+                  <div className="pt-3 border-t border-border/60 text-[11px] text-muted-foreground flex items-center justify-between">
                     <span>Whop Payments Suite</span>
-                    <span>Plan: {product.planId}</span>
+                    <span>Plan {product.planId}</span>
                   </div>
                 </div>
               )}
 
               {/* TEST CHECKOUT COMPLETION ACTION FOR BOUNTY DEMO / REVIEW */}
               <div className="p-4 rounded-xl bg-muted/30 border border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-xs">
-                  <span className="font-bold text-[#10243A]">Bounty Demo Helper:</span>
+                <div className="text-xs text-left">
+                  <span className="font-bold text-[#10243A]">Demonstration Checkout</span>
                   <p className="text-muted-foreground text-[11px]">
-                    Simulate a sandbox payment completion for video recording.
+                    Simulate a sandbox payment approval for review.
                   </p>
                 </div>
                 <Button
                   onClick={handleSimulatedComplete}
-                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs"
+                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-9 px-4"
                 >
-                  <Sparkles size={14} className="mr-1.5" /> Simulate Test Payment Approval
+                  Simulate Sandbox Approval
                 </Button>
               </div>
 
