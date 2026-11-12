@@ -1,196 +1,88 @@
-Welcome to your new TanStack Start app!
+# Summit Roofing Co. — Whop Websites Template
 
-# Getting Started
+A production-ready, reusable website template for US roofing companies built on **Whop Websites** (TanStack Start + Vite on Cloudflare Workers) and deployed live to a verified Whop-hosted domain.
 
-To run this application:
+- **Live Deployed URL:** [https://roofing-business-demo.whop.app](https://roofing-business-demo.whop.app) (routes to [https://roofing-business-demo.whop.site](https://roofing-business-demo.whop.site))
+- **Registered Whop App:** `Roofing Business Demo` (`app_kpqA6uSE5MOQCv`)
+- **Whop Account ID:** `biz_7cssbY71PQfJ99` (Roofind business)
+- **GitHub Repository:** [https://github.com/kevinthomas9898/roofing-project](https://github.com/kevinthomas9898/roofing-project)
+
+---
+
+## 🌟 Whop Features Implemented
+
+1. **Whop Payment Elements (Zero Custom Card Forms)**
+   - Integrated `@whop/elements-react` and `@whop/elements`.
+   - Uses `WhopElements` wrapper, `Checkout`, `CheckoutElement`, `ExpressCheckoutElement` (Apple Pay & Google Pay), and the mandatory `BrandingElement`.
+   - Dynamically surfaces Buy Now, Pay Later (BNPL) financing options such as Klarna, Splitit, and card installments for qualified buyers.
+
+2. **Real Products & Checkout Configurations on Whop**
+   - **Professional Roof Inspection ($149.00 USD):** One-time inspection fee (`prod_EZQrGmvuweoFU` / `plan_XTj2fOvhwDQJN` / `ch_KK0xYef1ZaPatSp`).
+   - **Roofing Project Deposit ($500.00 USD):** High-ticket job lock deposit (`prod_BxKhlSnSktO0p` / `plan_KQCSQRC6VXqjE` / `ch_UbBROzKAljFaAAq`).
+   - **Roof Maintenance Tune-Up ($299.00 USD):** Flat-rate preventive service (`prod_tV07Atpfhzh7y` / `plan_tAHQfKL2vuyXC` / `ch_TZyjxQxYnZHSRUE`).
+   - **Card-on-File Setup Intent:** Setup mode configuration (`ch_j3qOpmNOe0f5zqI`).
+
+3. **"Request an Estimate" Form Wired to Whop Leads API**
+   - Located at `#estimate`.
+   - Submits homeowner details (name, email, phone, street address, Central Texas area, service needed, roof age, notes) to `POST /api/lead`, forwarding to Whop's Leads API (`POST https://api.whop.com/api/v1/leads`).
+   - Quote requests land directly as actionable leads under Whop Account `biz_7cssbY71PQfJ99`.
+
+4. **Deposit → Job → Final Invoice Workflow (Whop Invoices API)**
+   - Interactive live demo section at `#invoice-workflow`.
+   - Demonstrates the high-ticket vertical cycle:
+     1. Homeowner pays $500 project deposit while storing payment method on file via Setup Intent (`mode: "setup"`).
+     2. Roofing crew executes tear-off and GAF architectural roof replacement.
+     3. Final remaining balance ($7,300.00) is generated via Whop Invoices API (`POST https://api.whop.com/api/v1/invoices`) and automatically charged to the stored card on file (`POST /api/v1/invoices/{id}/charge`).
+
+5. **Custom Pixel Event Tracking (`whop.track`)**
+   - Implements `trackWhopEvent()` using Whop's native tracking SDK:
+     - `estimate_requested`: Fires when a customer submits the estimate request form.
+     - `service_viewed`: Fires whenever a homeowner views or explores a roofing service card.
+     - `deposit_started`: Fires when opening the $500 project deposit checkout modal.
+   - Includes a floating **Live Whop Pixel Event Stream Inspector** on the bottom right of the page for real-time verification during reviews and demo recordings.
+
+6. **100% Template Reusability**
+   - Centralized metadata in `src/lib/whop-config.ts`.
+   - Any roofing contractor can rebrand company name, phone, license, service areas, Whop account ID, product plans, and pricing from a single configuration file without touching layout or structural code.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+- **Framework:** TanStack Start / Vite on Cloudflare Workers
+- **Deployment:** Whop CLI (`whop apps deploy`)
+- **Styling:** Tailwind CSS + custom high-contrast design tokens
+- **Icons:** Lucide React
+- **Payments:** `@whop/elements-react` + `@whop/elements`
+
+---
+
+## 🚀 Local Development
 
 ```bash
+# Install dependencies
 npm install
+
+# Start local development server
 npm run dev
-```
+# -> http://localhost:3000
 
-# Building For Production
-
-To build this application for production:
-
-```bash
+# Build for production
 npm run build
+
+# Deploy to live Whop-hosted domain
+npx whop apps deploy
 ```
 
-## Styling
+---
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## 📋 Submission Checklist
 
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
-
-
-## Deploy to Cloudflare Workers
-
-This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) and `wrangler.jsonc`:
-
-1. Install Wrangler: `npm install -g wrangler`
-2. Authenticate: `wrangler login`
-3. Deploy: `npx wrangler deploy`
-
-For production env vars, run `wrangler secret put MY_VAR` for each secret listed in `.env.example`. Public (non-secret) vars go in `wrangler.jsonc` under `vars`.
-
-KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- [x] Live `whop.app` URL: [https://roofing-business-demo.whop.app](https://roofing-business-demo.whop.app)
+- [x] Source code on GitHub: [https://github.com/kevinthomas9898/roofing-project](https://github.com/kevinthomas9898/roofing-project)
+- [x] Whop Payment Elements with `CheckoutElement`, `ExpressCheckoutElement`, and `BrandingElement`
+- [x] Whop Leads API integration on Estimate Request Form
+- [x] Whop Invoices API & Setup Intent demo for $7,300 balance billing
+- [x] Verified `whop.track` pixel events (`estimate_requested`, `service_viewed`, `deposit_started`)
+- [x] 3 real Whop plans ($149 inspection, $500 deposit, $299 flat-rate tune-up)
+- [x] Mobile and desktop responsive design
