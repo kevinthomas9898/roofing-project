@@ -4,6 +4,7 @@ import {
   ArrowDownRight,
   ArrowRight,
   Check,
+  ChevronDown,
   ClipboardCheck,
   Clock3,
   Hammer,
@@ -34,16 +35,67 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const navigation = [
+const companyDropdownLinks = [
+  { label: "Why Summit", href: "#about", desc: "Texas-certified standards & workmanship" },
+  { label: "Our 4-Step Process", href: "#process", desc: "From estimate to lifetime warranty" },
+  { label: "Service Areas", href: "#areas", desc: "Austin, Round Rock, Westlake & Central TX" },
+  { label: "Customer Reviews", href: "#reviews", desc: "5.0-star verified local homeowner stories" },
+];
+
+function CompanyNavDropdown() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center gap-1.5 hover:text-[#E87932] transition-colors py-1 focus:outline-none cursor-pointer"
+        aria-expanded={open}
+      >
+        <span>Why Summit</span>
+        <ChevronDown
+          size={14}
+          className={`text-[#10243A]/50 transition-transform duration-200 ${
+            open ? "rotate-180 text-[#E87932]" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 pt-2 z-50 animate-in fade-in-0 zoom-in-95 duration-150">
+          <div className="w-72 p-2 bg-white rounded-xl shadow-xl border border-slate-200/90 flex flex-col gap-1">
+            {companyDropdownLinks.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="flex flex-col gap-0.5 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                <span className="font-semibold text-sm text-[#10243A]">{item.label}</span>
+                <span className="text-xs text-muted-foreground">{item.desc}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const allNavLinks = [
   { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
   { label: "Why Summit", href: "#about" },
-  { label: "Process", href: "#process" },
-  { label: "Financing", href: "#financing" },
-  { label: "Areas", href: "#areas" },
-  { label: "Invoice Workflow", href: "#invoice-workflow" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Estimate", href: "#estimate" },
+  { label: "Our 4-Step Process", href: "#process" },
+  { label: "Financing Options", href: "#financing" },
+  { label: "Service Areas", href: "#areas" },
+  { label: "Invoice Workflow Demo", href: "#invoice-workflow" },
+  { label: "Customer Reviews", href: "#reviews" },
 ];
 
 const values = [
@@ -266,57 +318,92 @@ function HomePage() {
 
       {/* HEADER NAVIGATION */}
       <header className="site-header sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border shadow-xs">
-        <div className="nav-shell max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <BrandMark />
 
-          <nav
-            className={`desktop-nav flex items-center gap-6 text-sm font-medium ${
-              menuOpen ? "mobile-open" : ""
-            }`}
-            aria-label="Main navigation"
-          >
-            {navigation.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={closeMenu}
-                className="text-foreground/80 hover:text-[#E87932] transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-            <Button asChild className="nav-cta bg-[#E87932] hover:bg-[#E87932]/90 text-white font-semibold shadow-sm">
-              <a href="#estimate" onClick={closeMenu}>
-                Get Free Estimate <ArrowRight size={16} />
-              </a>
-            </Button>
+          {/* STREAMLINED DESKTOP NAV */}
+          <nav className="hidden lg:flex items-center gap-8 text-[13px] font-semibold text-[#10243A]/80 tracking-wide" aria-label="Main navigation">
+            <a href="#home" className="hover:text-[#E87932] transition-colors py-1">
+              Home
+            </a>
+            <a href="#services" className="hover:text-[#E87932] transition-colors py-1">
+              Services
+            </a>
+
+            <CompanyNavDropdown />
+
+            <a href="#financing" className="hover:text-[#E87932] transition-colors py-1">
+              Financing
+            </a>
+            <a href="#invoice-workflow" className="hover:text-[#E87932] transition-colors py-1">
+              Invoice Workflow
+            </a>
           </nav>
 
-          <a
-            className="phone-link hidden lg:flex items-center gap-3 text-left pl-4 border-l border-border"
-            href={`tel:${WHOP_CONFIG.company.displayPhone}`}
-          >
-            <span className="phone-icon p-2 rounded-full bg-[#10243A]/5 text-[#E87932]">
-              <Phone size={16} />
-            </span>
-            <span>
-              <small className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                CALL 24/7 ROOFING
-              </small>
-              <strong className="text-sm font-bold text-[#10243A]">{WHOP_CONFIG.company.displayPhone}</strong>
-            </span>
-          </a>
+          {/* DESKTOP RIGHT ACTIONS */}
+          <div className="hidden lg:flex items-center gap-5">
+            <a
+              className="flex items-center gap-2 text-xs font-bold text-[#10243A] hover:text-[#E87932] transition-colors"
+              href={`tel:${WHOP_CONFIG.company.displayPhone}`}
+            >
+              <span className="p-1.5 rounded-full bg-[#10243A]/5 text-[#E87932]">
+                <Phone size={13} />
+              </span>
+              <span>{WHOP_CONFIG.company.displayPhone}</span>
+            </a>
 
+            <Button asChild className="bg-[#E87932] hover:bg-[#E87932]/90 text-white font-semibold text-xs px-4 h-9 shadow-sm rounded-lg">
+              <a href="#estimate">
+                Get Free Estimate <ArrowRight size={14} />
+              </a>
+            </Button>
+          </div>
+
+          {/* MOBILE MENU TOGGLE BUTTON */}
           <Button
             variant="ghost"
             size="icon"
-            className="menu-toggle md:hidden"
+            className="lg:hidden text-[#10243A] hover:bg-slate-100"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </Button>
         </div>
+
+        {/* MOBILE DRAWER */}
+        {menuOpen && (
+          <div className="lg:hidden bg-white border-t border-border shadow-xl px-6 py-5 space-y-4 animate-in slide-in-from-top-2 duration-150">
+            <div className="space-y-1">
+              {allNavLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold text-[#10243A] hover:bg-slate-50 transition-colors"
+                >
+                  {item.label}
+                  <ArrowRight size={14} className="text-slate-300" />
+                </a>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-border space-y-2.5">
+              <Button asChild className="w-full bg-[#E87932] hover:bg-[#E87932]/90 text-white font-semibold py-5 rounded-lg shadow-sm">
+                <a href="#estimate" onClick={closeMenu}>
+                  Get Free Estimate <ArrowRight size={16} />
+                </a>
+              </Button>
+              <a
+                href={`tel:${WHOP_CONFIG.company.displayPhone}`}
+                className="flex items-center justify-center gap-2 py-2.5 text-sm font-bold text-[#10243A] bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                <Phone size={15} className="text-[#E87932]" />
+                Call 24/7: {WHOP_CONFIG.company.displayPhone}
+              </a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* HERO SECTION */}
