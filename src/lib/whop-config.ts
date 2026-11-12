@@ -1,0 +1,57 @@
+export const WHOP_CONFIG = {
+  accountId: "biz_7cssbY71PQfJ99",
+  appId: "app_kpqA6uSE5MOQCv",
+  company: {
+    name: "Summit Roofing Co.",
+    tagline: "Protecting Your Home, One Roof at a Time.",
+    location: "Austin, Texas, USA",
+    phone: "(512) 890-ROOF",
+    displayPhone: "(512) 890-7663",
+    email: "contact@summitroofing.demo",
+    license: "TX-RCL #849201 (Fully Insured & Bonded)",
+  },
+  products: {
+    inspection: {
+      id: "prod_EZQrGmvuweoFU",
+      title: "Professional Roof Inspection",
+      description: "Thorough 21-point visual assessment of shingles, flashing, pipe boots, gutters, and decking condition with photo documentation.",
+      price: 149,
+      formattedPrice: "$149",
+      planId: "plan_XTj2fOvhwDQJN",
+      checkoutConfigId: "ch_KK0xYef1ZaPatSp",
+      purchaseUrl: "https://whop.com/checkout/ch_KK0xYef1ZaPatSp/",
+    },
+    deposit: {
+      id: "prod_BxKhlSnSktO0p",
+      title: "Roofing Project Deposit",
+      description: "Initial deposit securing project schedule, materials procurement, and installation crew reservation. Setup intent stores card on file for final balance.",
+      price: 500,
+      formattedPrice: "$500",
+      planId: "plan_KQCSQRC6VXqjE",
+      checkoutConfigId: "ch_UbBROzKAljFaAAq",
+      purchaseUrl: "https://whop.com/checkout/ch_UbBROzKAljFaAAq/",
+    },
+    tuneUp: {
+      id: "prod_tV07Atpfhzh7y",
+      title: "Roof Maintenance Tune-Up",
+      description: "Complete flat-rate seasonal roof tune-up: seal exposed nail heads, re-caulk pipe collars, reseal flashing, and minor shingle repairs.",
+      price: 299,
+      formattedPrice: "$299",
+      planId: "plan_tAHQfKL2vuyXC",
+      checkoutConfigId: "ch_TZyjxQxYnZHSRUE",
+      purchaseUrl: "https://whop.com/checkout/ch_TZyjxQxYnZHSRUE/",
+    },
+    setupMode: {
+      checkoutConfigId: "ch_j3qOpmNOe0f5zqI",
+      purchaseUrl: "https://whop.com/checkout/ch_j3qOpmNOe0f5zqI/",
+    },
+  },
+  serviceAreas: [
+    { name: "Austin", zipPrefix: "787xx", responseTime: "< 2 hrs" },
+    { name: "Round Rock", zipPrefix: "786xx", responseTime: "< 2 hrs" },
+    { name: "Cedar Park", zipPrefix: "786xx", responseTime: "< 3 hrs" },
+    { name: "Pflugerville", zipPrefix: "786xx", responseTime: "< 2 hrs" },
+    { name: "Georgetown", zipPrefix: "786xx", responseTime: "< 3 hrs" },
+  ],
+};
+
