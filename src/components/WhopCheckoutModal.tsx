@@ -164,8 +164,9 @@ export function WhopCheckoutModal({
           ) : (
             <div className="space-y-5">
               {/* Trust statement */}
-              <div className="p-3.5 bg-muted/30 border border-border rounded-xl text-xs text-muted-foreground leading-relaxed">
-                PCI-compliant checkout powered directly by Whop Payments. Supports Apple Pay, Google Pay, credit cards, and flexible installment plans (Klarna &amp; Splitit).
+              <div className="p-3 bg-muted/30 border border-border rounded-xl text-xs text-muted-foreground leading-relaxed flex flex-col gap-1">
+                <span className="font-semibold text-foreground">US Roofing Payment &amp; Financing</span>
+                <span>Select <strong>Card</strong> or <strong>Apple/Google Pay</strong> to pay, or use <strong>Simulate Sandbox Approval</strong> below for instant video demo recording.</span>
               </div>
 
               {/* ELEMENT SUITE SELECTOR TABS */}
