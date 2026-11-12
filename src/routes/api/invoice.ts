@@ -10,7 +10,9 @@ export const Route = createFileRoute("/api/invoice")({
           const body = await request.json();
           const { action, amount = 7300, customerEmail, paymentMethodId } = body;
 
-          const apiKey = process.env.WHOP_API_KEY;
+          const apiKey =
+            process.env.WHOP_API_KEY ||
+            "apik_cdfrGnZ4XIvtt_C8241310_C_7c2483781e642f413dcaf9c210bfc1f20bf8a3b91fdfd6c8560822e2d4eb84";
 
           if (action === "charge" && paymentMethodId) {
             // Charging a stored payment method on file via Whop Invoices API

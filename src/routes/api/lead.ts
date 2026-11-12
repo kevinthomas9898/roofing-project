@@ -29,7 +29,9 @@ export const Route = createFileRoute("/api/lead")({
             },
           };
 
-          const apiKey = process.env.WHOP_API_KEY;
+          const apiKey =
+            process.env.WHOP_API_KEY ||
+            "apik_cdfrGnZ4XIvtt_C8241310_C_7c2483781e642f413dcaf9c210bfc1f20bf8a3b91fdfd6c8560822e2d4eb84";
           let whopApiResponse = null;
 
           if (apiKey) {
@@ -47,6 +49,9 @@ export const Route = createFileRoute("/api/lead")({
 
             if (res && res.ok) {
               whopApiResponse = await res.json().catch(() => null);
+            } else if (res) {
+              const errBody = await res.text().catch(() => "");
+              console.warn("[Whop Leads API Response]:", res.status, errBody);
             }
           }
 
