@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import { WHOP_CONFIG } from "@/lib/whop-config";
 import { trackWhopEvent } from "@/lib/whop-tracker";
 

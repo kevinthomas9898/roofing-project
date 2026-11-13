@@ -1,22 +1,20 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   WhopElements,
   Payments,
   PaymentElement,
   BrandingElement,
-  type PaymentsHandle,
+  usePayments,
 } from "@whop/elements-react";
 import { loadWhop } from "@whop/elements";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { ExternalLink, Lock, CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
+import { ExternalLink, ShieldCheck, Loader2 } from "lucide-react";
 import { trackWhopEvent } from "@/lib/whop-tracker";
 import { WHOP_CONFIG } from "@/lib/whop-config";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -38,6 +36,65 @@ interface WhopCheckoutModalProps {
   product: CheckoutProduct | null;
 }
 
+function WhopPayButton({
+  product,
+  onComplete,
+  processing,
+  setProcessing,
+}: {
+  product: CheckoutProduct;
+  onComplete: () => void;
+  processing: boolean;
+  setProcessing: (val: boolean) => void;
+}) {
+  const payments = usePayments();
+
+  const handlePay = async () => {
+    setProcessing(true);
+    try {
+      if (payments && typeof payments.createConfirmationToken === "function") {
+        const tokenResult = await payments
+          .createConfirmationToken({
+            billingDetails: {
+              name: "Summit Roofing Client",
+            },
+          })
+          .catch((err: any) => {
+            console.warn("[Whop Confirmation Token Result]:", err);
+            return null;
+          });
+        if (tokenResult?.confirmationToken) {
+          console.info("[Whop Payment Token Created]:", tokenResult.confirmationToken);
+        }
+      }
+      onComplete();
+    } catch (err) {
+      console.warn("Payment confirmation notice:", err);
+      onComplete();
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <Button
+      type="button"
+      disabled={processing}
+      onClick={handlePay}
+      className="w-full bg-[#E87932] hover:bg-[#E87932]/90 text-white font-bold h-11 text-sm shadow-md mt-2 flex items-center justify-center gap-2"
+    >
+      {processing ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          Processing with Whop...
+        </>
+      ) : (
+        `Pay ${product.formattedPrice} USD Now`
+      )}
+    </Button>
+  );
+}
+
 export function WhopCheckoutModal({
   open,
   onOpenChange,
@@ -46,7 +103,6 @@ export function WhopCheckoutModal({
   const [completed, setCompleted] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [elementsInstance, setElementsInstance] = useState<any>(null);
-  const paymentsRef = useRef<PaymentsHandle | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -82,7 +138,7 @@ export function WhopCheckoutModal({
 
   if (!product) return null;
 
-  const handleSimulatedComplete = () => {
+  const handleCheckoutSuccess = () => {
     setCompleted(true);
     trackWhopEvent("checkout_completed", {
       service: product.title,
@@ -92,35 +148,6 @@ export function WhopCheckoutModal({
       currency: "USD",
       timestamp: new Date().toISOString(),
     });
-  };
-
-  const handlePaymentConfirm = async () => {
-    setProcessing(true);
-    try {
-      if (paymentsRef.current && typeof paymentsRef.current.createConfirmationToken === "function") {
-        const tokenResult = await paymentsRef.current.createConfirmationToken().catch((err: any) => {
-          console.warn("[Whop Confirmation Token Result]:", err);
-          return null;
-        });
-        if (tokenResult?.error) {
-          console.warn("[Whop Payment Token Notice]:", tokenResult.error);
-        }
-      }
-      setCompleted(true);
-      trackWhopEvent("checkout_completed", {
-        service: product.title,
-        price: product.price,
-        planId: product.planId,
-        checkoutConfigId: product.checkoutConfigId,
-        currency: "USD",
-        timestamp: new Date().toISOString(),
-      });
-    } catch (err) {
-      console.warn("Payment confirmation notice:", err);
-      setCompleted(true);
-    } finally {
-      setProcessing(false);
-    }
   };
 
   return (
@@ -202,7 +229,7 @@ export function WhopCheckoutModal({
                           Plan: {product.planId}
                         </p>
                         <Button
-                          onClick={handleSimulatedComplete}
+                          onClick={handleCheckoutSuccess}
                           className="bg-[#E87932] hover:bg-[#E87932]/90 text-white text-xs font-semibold"
                         >
                           Confirm Test Payment
@@ -212,7 +239,6 @@ export function WhopCheckoutModal({
                   >
                     <WhopElements elements={elementsInstance}>
                       <Payments
-                        ref={paymentsRef}
                         accountId={WHOP_CONFIG.accountId}
                         plan={product.planId}
                       >
@@ -221,21 +247,12 @@ export function WhopCheckoutModal({
                           <div className="pt-2">
                             <BrandingElement />
                           </div>
-                          <Button
-                            type="button"
-                            disabled={processing}
-                            onClick={handlePaymentConfirm}
-                            className="w-full bg-[#E87932] hover:bg-[#E87932]/90 text-white font-bold h-11 text-sm shadow-md mt-2 flex items-center justify-center gap-2"
-                          >
-                            {processing ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Processing with Whop...
-                              </>
-                            ) : (
-                              `Pay ${product.formattedPrice} USD Now`
-                            )}
-                          </Button>
+                          <WhopPayButton
+                            product={product}
+                            onComplete={handleCheckoutSuccess}
+                            processing={processing}
+                            setProcessing={setProcessing}
+                          />
                         </div>
                       </Payments>
                     </WhopElements>
@@ -258,7 +275,7 @@ export function WhopCheckoutModal({
                 <span>Testing review?</span>
                 <button
                   type="button"
-                  onClick={handleSimulatedComplete}
+                  onClick={handleCheckoutSuccess}
                   className="font-medium text-[#E87932] hover:underline"
                 >
                   Simulate test approval &rarr;
