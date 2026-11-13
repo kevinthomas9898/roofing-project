@@ -15,6 +15,7 @@ export const Route = createFileRoute("/api/lead")({
           const whopPayload = {
             account_id: WHOP_CONFIG.accountId,
             product_id: WHOP_CONFIG.products.deposit.id,
+            user_id: lead.userId || "user_JrxkfwUXKtvEP",
             metadata: {
               customer_name: lead.name || "Homeowner Lead",
               email: lead.email,
