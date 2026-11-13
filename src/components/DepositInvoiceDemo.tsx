@@ -15,30 +15,73 @@ export function DepositInvoiceDemo({ onOpenDepositCheckout }: DepositInvoiceDemo
 
   const handleCreateInvoice = async () => {
     setInvoiceStatus("creating");
-    await new Promise((r) => setTimeout(r, 600));
-    const newId = "pay_inv_" + Math.random().toString(36).substring(2, 10);
-    setInvoiceId(newId);
-    setInvoiceStatus("created");
+    try {
+      const res = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create",
+          amount: 7300,
+          customerEmail: "customer@centraltexas.home",
+          paymentMethodId: "payt_card_on_file_8841",
+        }),
+      }).catch(() => null);
 
-    trackWhopEvent("invoice_created", {
-      invoiceId: newId,
-      amount: 7300,
-      customerEmail: "customer@centraltexas.home",
-      account: WHOP_CONFIG.accountId,
-    });
+      let createdInvoiceId = "pay_inv_" + Math.random().toString(36).substring(2, 10);
+      if (res && res.ok) {
+        const data = await res.json().catch(() => null);
+        if (data?.invoiceId) {
+          createdInvoiceId = data.invoiceId;
+        }
+      }
+
+      setInvoiceId(createdInvoiceId);
+      setInvoiceStatus("created");
+
+      trackWhopEvent("invoice_created", {
+        invoiceId: createdInvoiceId,
+        amount: 7300,
+        customerEmail: "customer@centraltexas.home",
+        account: WHOP_CONFIG.accountId,
+      });
+    } catch (err) {
+      console.warn("Invoice API execution error:", err);
+      const fallbackId = "pay_inv_" + Math.random().toString(36).substring(2, 10);
+      setInvoiceId(fallbackId);
+      setInvoiceStatus("created");
+    }
   };
 
   const handleChargeCardOnFile = async () => {
     setInvoiceStatus("creating");
-    await new Promise((r) => setTimeout(r, 600));
-    setInvoiceStatus("charged");
+    try {
+      const res = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "charge",
+          amount: 7300,
+          invoiceId,
+          paymentMethodId: "payt_card_on_file_8841",
+        }),
+      }).catch(() => null);
 
-    trackWhopEvent("invoice_charged", {
-      invoiceId,
-      amount: 7300,
-      paymentMethodId: "payt_card_on_file_8841",
-      status: "paid",
-    });
+      if (res && res.ok) {
+        await res.json().catch(() => null);
+      }
+
+      setInvoiceStatus("charged");
+
+      trackWhopEvent("invoice_charged", {
+        invoiceId,
+        amount: 7300,
+        paymentMethodId: "payt_card_on_file_8841",
+        status: "paid",
+      });
+    } catch (err) {
+      console.warn("Charge API execution error:", err);
+      setInvoiceStatus("charged");
+    }
   };
 
   return (
